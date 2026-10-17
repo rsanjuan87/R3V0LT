@@ -31,7 +31,7 @@ jobs:
           mkdir -v -p builds/macos
 
       - name: Compilar para Linux
-        run: godot --headless --verbose --export-release "Linux/X11" ./builds/linux/ReVoltRC.x86_64
+        run: godot --headless --verbose --export-release "Linux" ./builds/linux/ReVoltRC.x86_64
 
       - name: Compilar para Windows (.exe)
         run: godot --headless --verbose --export-release "Windows Desktop" ./builds/windows/ReVoltRC.exe
