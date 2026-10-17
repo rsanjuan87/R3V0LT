@@ -3,15 +3,27 @@ class_name RCCar
 
 enum PowerUp { NONE, ROCKET, OIL }
 
-@export var max_fuerza_motor: float = 380.0
-@export var max_fuerza_freno: float = 18.0
-@export var max_angulo_giro: float = 0.52
-@export var velocidad_retorno_giro: float = 6.0
-@export var masa_chasis: float = 45.0
+@export_group("Motor y Fisica")
+@export var max_fuerza_motor: float = 420.0
+@export var max_fuerza_freno: float = 22.0
+@export var max_angulo_giro: float = 0.54
+@export var velocidad_retorno_giro: float = 6.5
+@export var masa_chasis: float = 40.0
 
+@export_group("Giroscopio / Inclinacion")
+@export var giroscopio_activo: bool = false
+@export var sensibilidad_giro: float = 0.35
+@export var zona_muerta_giro: float = 0.3
+@export var invertir_giroscopio: bool = false
+
+@export_group("Armas")
 @export var rocket_scene: PackedScene = preload("res://scenes/Rocket.tscn")
 @export var oil_scene: PackedScene = preload("res://scenes/OilSlick.tscn")
 
+@onready var front_left_wheel: VehicleWheel3D = $WheelFrontLeft
+@onready var front_right_wheel: VehicleWheel3D = $WheelFrontRight
+@onready var rear_left_wheel: VehicleWheel3D = $WheelRearLeft
+@onready var rear_right_wheel: VehicleWheel3D = $WheelRearRight
 @onready var weapon_spawn_front: Marker3D = $WeaponFront
 @onready var weapon_spawn_rear: Marker3D = $WeaponRear
 
@@ -19,11 +31,12 @@ var current_powerup: PowerUp = PowerUp.NONE
 var angulo_actual_giro: float = 0.0
 var esta_patinando: bool = false
 var tiempo_patinaje: float = 0.0
+var mirando_atras: bool = false
 
 func _ready() -> void:
 	mass = masa_chasis
 	center_of_mass_mode = RigidBody3D.CENTER_OF_MASS_MODE_CUSTOM
-	center_of_mass = Vector3(0.0, -0.15, 0.0)
+	center_of_mass = Vector3(0.0, -0.16, 0.0)
 
 func _physics_process(delta: float) -> void:
 	if esta_patinando:
@@ -32,10 +45,27 @@ func _physics_process(delta: float) -> void:
 
 	_procesar_direccion(delta)
 	_procesar_motor()
-	_procesar_acciones()
+	_procesar_acciones(delta)
 
 func _procesar_direccion(delta: float) -> void:
 	var dir_input: float = Input.get_axis("girar_der", "girar_izq")
+
+	if giroscopio_activo:
+		var sensor_accel: Vector3 = Input.get_accelerometer()
+		var raw_tilt: float = -sensor_accel.y if not invertir_giroscopio else sensor_accel.y
+		if abs(raw_tilt) > zona_muerta_giro:
+			var valor_filtrado = (raw_tilt - (sign(raw_tilt) * zona_muerta_giro)) * sensibilidad_giro
+			if abs(dir_input) < 0.1:
+				dir_input = clamp(valor_filtrado, -1.0, 1.0)
+
+	if Input.is_action_pressed("freno_mano"):
+		rear_left_wheel.wheel_friction_slip = 0.6
+		rear_right_wheel.wheel_friction_slip = 0.6
+		dir_input *= 1.3
+	else:
+		rear_left_wheel.wheel_friction_slip = 2.4
+		rear_right_wheel.wheel_friction_slip = 2.4
+
 	var objetivo: float = dir_input * max_angulo_giro
 	angulo_actual_giro = lerp(angulo_actual_giro, objetivo, velocidad_retorno_giro * delta)
 	steering = angulo_actual_giro
@@ -43,9 +73,10 @@ func _procesar_direccion(delta: float) -> void:
 func _procesar_motor() -> void:
 	var accel_input: float = Input.get_axis("frenar", "acelerar")
 	var marcha_adelante_dot: float = linear_velocity.dot(-transform.basis.z)
+	var multiplicador_turbo: float = 1.6 if Input.is_action_pressed("turbo_bocina") else 1.0
 
 	if accel_input > 0.0:
-		engine_force = accel_input * max_fuerza_motor
+		engine_force = accel_input * max_fuerza_motor * multiplicador_turbo
 		brake = 0.0
 	elif accel_input < 0.0:
 		if marcha_adelante_dot > 0.5:
@@ -58,12 +89,14 @@ func _procesar_motor() -> void:
 		engine_force = 0.0
 		brake = 1.2
 
-func _procesar_acciones() -> void:
+func _procesar_acciones(_delta: float) -> void:
 	if Input.is_action_just_pressed("usar_item"):
 		activar_arma()
 
 	if Input.is_action_just_pressed("reset_auto"):
 		voltear_coche()
+
+	mirando_atras = Input.is_action_pressed("mirar_atras")
 
 func activar_arma() -> void:
 	match current_powerup:
@@ -91,7 +124,7 @@ func pisar_aceite() -> void:
 		return
 	esta_patinando = true
 	tiempo_patinaje = 1.3
-	apply_torque_impulse(Vector3.UP * 70.0)
+	apply_torque_impulse(Vector3.UP * 75.0)
 
 func _procesar_trompo(delta: float) -> void:
 	tiempo_patinaje -= delta
@@ -103,7 +136,7 @@ func _procesar_trompo(delta: float) -> void:
 
 func recibir_impacto_cohete(pos_explosion: Vector3, fuerza: float) -> void:
 	var direccion: Vector3 = (global_position - pos_explosion).normalized()
-	direccion.y += 0.5
+	direccion.y += 0.55
 	apply_central_impulse(direccion.normalized() * fuerza)
 	pisar_aceite()
 
@@ -116,6 +149,10 @@ func voltear_coche() -> void:
 		dir_frente = dir_frente.normalized()
 
 	global_transform.basis = Basis.looking_at(dir_frente, Vector3.UP)
-	global_position.y += 0.8
+	global_position.y += 0.9
 	linear_velocity = Vector3.ZERO
 	angular_velocity = Vector3.ZERO
+
+func alternar_giroscopio() -> bool:
+	giroscopio_activo = !giroscopio_activo
+	return giroscopio_activo

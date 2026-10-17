@@ -1,94 +1,210 @@
-[gd_scene load_steps=8 format=3]
+[gd_scene load_steps=18 format=3]
 
 [ext_resource type="Script" path="res://scripts/car.gd" id="1_car"]
 
-[sub_resource type="BoxShape3D" id="BoxShape3D_chasis"]
-size = Vector3(0.65, 0.28, 1.25)
+[sub_resource type="BoxShape3D" id="Box_Colision"]
+size = Vector3(0.65, 0.3, 1.25)
 
-[sub_resource type="StandardMaterial3D" id="Mat_Car"]
-albedo_color = Color(0.95, 0.15, 0.05, 1)
-roughness = 0.3
+[sub_resource type="StandardMaterial3D" id="Mat_Carroceria"]
+albedo_color = Color(0.92, 0.12, 0.08, 1)
+metallic = 0.65
+roughness = 0.25
 
-[sub_resource type="BoxMesh" id="BoxMesh_visual"]
-material = SubResource("Mat_Car")
-size = Vector3(0.65, 0.25, 1.25)
+[sub_resource type="BoxMesh" id="Mesh_ChasisBase"]
+material = SubResource("Mat_Carroceria")
+size = Vector3(0.55, 0.16, 1.1)
 
-[sub_resource type="StandardMaterial3D" id="Mat_Rueda"]
-albedo_color = Color(0.1, 0.1, 0.1, 1)
+[sub_resource type="StandardMaterial3D" id="Mat_Cabina"]
+albedo_color = Color(0.08, 0.08, 0.12, 1)
+metallic = 0.9
+roughness = 0.1
 
-[sub_resource type="CylinderMesh" id="CylinderMesh_rueda"]
-material = SubResource("Mat_Rueda")
+[sub_resource type="PrismMesh" id="Mesh_Cabina"]
+material = SubResource("Mat_Cabina")
+left_to_right = 0.65
+size = Vector3(0.42, 0.2, 0.5)
+
+[sub_resource type="StandardMaterial3D" id="Mat_Faros"]
+albedo_color = Color(1, 1, 0.9, 1)
+emission_enabled = true
+emission = Color(0.9, 0.95, 1, 1)
+emission_energy_multiplier = 4.0
+
+[sub_resource type="BoxMesh" id="Mesh_Faro"]
+material = SubResource("Mat_Faros")
+size = Vector3(0.12, 0.06, 0.04)
+
+[sub_resource type="StandardMaterial3D" id="Mat_Freno"]
+albedo_color = Color(1, 0.1, 0.1, 1)
+emission_enabled = true
+emission = Color(1, 0, 0, 1)
+emission_energy_multiplier = 2.0
+
+[sub_resource type="BoxMesh" id="Mesh_Piloto"]
+material = SubResource("Mat_Freno")
+size = Vector3(0.1, 0.05, 0.03)
+
+[sub_resource type="StandardMaterial3D" id="Mat_NegroMate"]
+albedo_color = Color(0.15, 0.15, 0.15, 1)
+roughness = 0.7
+
+[sub_resource type="BoxMesh" id="Mesh_Aleron"]
+material = SubResource("Mat_Carroceria")
+size = Vector3(0.68, 0.04, 0.22)
+
+[sub_resource type="CylinderMesh" id="Mesh_Antena"]
+material = SubResource("Mat_NegroMate")
+top_radius = 0.005
+bottom_radius = 0.008
+height = 0.6
+
+[sub_resource type="StandardMaterial3D" id="Mat_BolaAntena"]
+albedo_color = Color(1, 0.85, 0, 1)
+roughness = 0.2
+
+[sub_resource type="SphereMesh" id="Mesh_Bola"]
+material = SubResource("Mat_BolaAntena")
+radius = 0.03
+height = 0.06
+
+[sub_resource type="StandardMaterial3D" id="Mat_Goma"]
+albedo_color = Color(0.08, 0.08, 0.08, 1)
+roughness = 0.85
+
+[sub_resource type="CylinderMesh" id="Mesh_Neumatico"]
+material = SubResource("Mat_Goma")
 top_radius = 0.16
 bottom_radius = 0.16
 height = 0.12
 
+[sub_resource type="StandardMaterial3D" id="Mat_Llanta"]
+albedo_color = Color(0.9, 0.9, 0.92, 1)
+metallic = 0.85
+roughness = 0.2
+
+[sub_resource type="CylinderMesh" id="Mesh_LlantaCentro"]
+material = SubResource("Mat_Llanta")
+top_radius = 0.1
+bottom_radius = 0.1
+height = 0.125
+
 [node name="Car" type="VehicleBody3D"]
-mass = 45.0
+mass = 40.0
 script = ExtResource("1_car")
 
 [node name="CollisionShape3D" type="CollisionShape3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.18, 0)
-shape = SubResource("BoxShape3D_chasis")
+shape = SubResource("Box_Colision")
 
-[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+[node name="ModeloVisual" type="Node3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.18, 0)
-mesh = SubResource("BoxMesh_visual")
+
+[node name="ChasisBase" type="MeshInstance3D" parent="ModeloVisual"]
+mesh = SubResource("Mesh_ChasisBase")
+
+[node name="Cabina" type="MeshInstance3D" parent="ModeloVisual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.15, -0.05)
+mesh = SubResource("Mesh_Cabina")
+
+[node name="FaroIzq" type="MeshInstance3D" parent="ModeloVisual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, 0.03, -0.56)
+mesh = SubResource("Mesh_Faro")
+
+[node name="FaroDer" type="MeshInstance3D" parent="ModeloVisual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, 0.03, -0.56)
+mesh = SubResource("Mesh_Faro")
+
+[node name="PilotoIzq" type="MeshInstance3D" parent="ModeloVisual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.2, 0.05, 0.55)
+mesh = SubResource("Mesh_Piloto")
+
+[node name="PilotoDer" type="MeshInstance3D" parent="ModeloVisual"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.2, 0.05, 0.55)
+mesh = SubResource("Mesh_Piloto")
+
+[node name="Aleron" type="MeshInstance3D" parent="ModeloVisual"]
+transform = Transform3D(1, 0, 0, 0, 0.984808, 0.173648, 0, -0.173648, 0.984808, 0, 0.24, 0.48)
+mesh = SubResource("Mesh_Aleron")
+
+[node name="Antena" type="MeshInstance3D" parent="ModeloVisual"]
+transform = Transform3D(1, 0, 0, 0, 0.984808, -0.173648, 0, 0.173648, 0.984808, 0.18, 0.35, 0.4)
+mesh = SubResource("Mesh_Antena")
+
+[node name="BolaAntena" type="MeshInstance3D" parent="ModeloVisual/Antena"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.3, 0)
+mesh = SubResource("Mesh_Bola")
 
 [node name="WheelFrontLeft" type="VehicleWheel3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.38, 0.15, -0.42)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.36, 0.15, -0.42)
 use_as_steering = true
 wheel_roll_influence = 0.1
 wheel_radius = 0.16
 suspension_travel = 0.18
-suspension_stiffness = 45.0
-damping_compression = 2.0
-damping_relaxation = 2.8
+suspension_stiffness = 46.0
+damping_compression = 2.2
+damping_relaxation = 2.9
 
-[node name="Mesh" type="MeshInstance3D" parent="WheelFrontLeft"]
+[node name="Neumatico" type="MeshInstance3D" parent="WheelFrontLeft"]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
-mesh = SubResource("CylinderMesh_rueda")
+mesh = SubResource("Mesh_Neumatico")
+
+[node name="Llanta" type="MeshInstance3D" parent="WheelFrontLeft"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("Mesh_LlantaCentro")
 
 [node name="WheelFrontRight" type="VehicleWheel3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.38, 0.15, -0.42)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.36, 0.15, -0.42)
 use_as_steering = true
 wheel_roll_influence = 0.1
 wheel_radius = 0.16
 suspension_travel = 0.18
-suspension_stiffness = 45.0
-damping_compression = 2.0
-damping_relaxation = 2.8
+suspension_stiffness = 46.0
+damping_compression = 2.2
+damping_relaxation = 2.9
 
-[node name="Mesh" type="MeshInstance3D" parent="WheelFrontRight"]
+[node name="Neumatico" type="MeshInstance3D" parent="WheelFrontRight"]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
-mesh = SubResource("CylinderMesh_rueda")
+mesh = SubResource("Mesh_Neumatico")
+
+[node name="Llanta" type="MeshInstance3D" parent="WheelFrontRight"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("Mesh_LlantaCentro")
 
 [node name="WheelRearLeft" type="VehicleWheel3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.38, 0.15, 0.42)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.36, 0.15, 0.42)
 use_as_traction = true
 wheel_roll_influence = 0.1
 wheel_radius = 0.16
 suspension_travel = 0.18
-suspension_stiffness = 45.0
-damping_compression = 2.0
-damping_relaxation = 2.8
+suspension_stiffness = 46.0
+damping_compression = 2.2
+damping_relaxation = 2.9
 
-[node name="Mesh" type="MeshInstance3D" parent="WheelRearLeft"]
+[node name="Neumatico" type="MeshInstance3D" parent="WheelRearLeft"]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
-mesh = SubResource("CylinderMesh_rueda")
+mesh = SubResource("Mesh_Neumatico")
+
+[node name="Llanta" type="MeshInstance3D" parent="WheelRearLeft"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("Mesh_LlantaCentro")
 
 [node name="WheelRearRight" type="VehicleWheel3D" parent="."]
-transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.38, 0.15, 0.42)
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.36, 0.15, 0.42)
 use_as_traction = true
 wheel_roll_influence = 0.1
 wheel_radius = 0.16
 suspension_travel = 0.18
-suspension_stiffness = 45.0
-damping_compression = 2.0
-damping_relaxation = 2.8
+suspension_stiffness = 46.0
+damping_compression = 2.2
+damping_relaxation = 2.9
 
-[node name="Mesh" type="MeshInstance3D" parent="WheelRearRight"]
+[node name="Neumatico" type="MeshInstance3D" parent="WheelRearRight"]
 transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
-mesh = SubResource("CylinderMesh_rueda")
+mesh = SubResource("Mesh_Neumatico")
+
+[node name="Llanta" type="MeshInstance3D" parent="WheelRearRight"]
+transform = Transform3D(-4.37114e-08, -1, 0, 1, -4.37114e-08, 0, 0, 0, 1, 0, 0, 0)
+mesh = SubResource("Mesh_LlantaCentro")
 
 [node name="WeaponFront" type="Marker3D" parent="."]
 transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.18, -0.8)

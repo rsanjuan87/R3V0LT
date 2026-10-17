@@ -6,38 +6,86 @@ config/name="ReVolt RC Clone"
 run/main_scene="res://scenes/MainTrack.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 
+[display]
+
+window/size/viewport_width=1280
+window/size/viewport_height=720
+window/stretch/mode="canvas_items"
+window/stretch/aspect="expand"
+window/handheld/orientation=5
+
 [input]
 
 acelerar={
 "deadzone": 0.5,
-"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":87,"physical_keycode":0,"key_label":0,"unicode":119,"echo":false,"script":null)
+"events": [
+Object(InputEventKey,"keycode":87,"unicode":119),
+Object(InputEventKey,"keycode":4194320)
 ]
 }
 frenar={
 "deadzone": 0.5,
-"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":83,"physical_keycode":0,"key_label":0,"unicode":115,"echo":false,"script":null)
+"events": [
+Object(InputEventKey,"keycode":83,"unicode":115),
+Object(InputEventKey,"keycode":4194322)
 ]
 }
 girar_izq={
 "deadzone": 0.5,
-"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":65,"physical_keycode":0,"key_label":0,"unicode":97,"echo":false,"script":null)
+"events": [
+Object(InputEventKey,"keycode":65,"unicode":97),
+Object(InputEventKey,"keycode":4194319)
 ]
 }
 girar_der={
 "deadzone": 0.5,
-"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":68,"physical_keycode":0,"key_label":0,"unicode":100,"echo":false,"script":null)
+"events": [
+Object(InputEventKey,"keycode":68,"unicode":100),
+Object(InputEventKey,"keycode":4194321)
 ]
 }
 usar_item={
 "deadzone": 0.5,
-"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":32,"physical_keycode":0,"key_label":0,"unicode":32,"echo":false,"script":null)
+"events": [
+Object(InputEventKey,"keycode":90,"unicode":122),
+Object(InputEventKey,"keycode":76,"unicode":108),
+Object(InputEventKey,"keycode":32,"unicode":32)
 ]
 }
 reset_auto={
 "deadzone": 0.5,
-"events": [Object(InputEventKey,"resource_local_to_scene":false,"resource_name":"","device":-1,"window_id":0,"alt_pressed":false,"shift_pressed":false,"ctrl_pressed":false,"meta_pressed":false,"pressed":false,"keycode":82,"physical_keycode":0,"key_label":0,"unicode":114,"echo":false,"script":null)
+"events": [
+Object(InputEventKey,"keycode":88,"unicode":120),
+Object(InputEventKey,"keycode":75,"unicode":107),
+Object(InputEventKey,"keycode":82,"unicode":114)
 ]
 }
+freno_mano={
+"deadzone": 0.5,
+"events": [
+Object(InputEventKey,"keycode":67,"unicode":99),
+Object(InputEventKey,"keycode":74,"unicode":106)
+]
+}
+mirar_atras={
+"deadzone": 0.5,
+"events": [
+Object(InputEventKey,"keycode":86,"unicode":118),
+Object(InputEventKey,"keycode":72,"unicode":104)
+]
+}
+turbo_bocina={
+"deadzone": 0.5,
+"events": [
+Object(InputEventKey,"keycode":66,"unicode":98),
+Object(InputEventKey,"keycode":71,"unicode":103)
+]
+}
+
+[input_devices]
+
+pointing/emulate_touch_from_mouse=true
+pointing/emulate_mouse_from_touch=true
 
 [rendering]
 
