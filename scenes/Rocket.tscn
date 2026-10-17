@@ -1,0 +1,28 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://scripts/rocket.gd" id="1_rocket"]
+
+[sub_resource type="SphereShape3D" id="SphereShape3D_1"]
+radius = 0.25
+
+[sub_resource type="StandardMaterial3D" id="Mat_Rocket"]
+albedo_color = Color(1, 0.7, 0, 1)
+emission_enabled = true
+emission = Color(1, 0.4, 0, 1)
+emission_energy_multiplier = 3.0
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_1"]
+material = SubResource("Mat_Rocket")
+top_radius = 0.04
+bottom_radius = 0.08
+height = 0.4
+
+[node name="Rocket" type="Area3D"]
+script = ExtResource("1_rocket")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+shape = SubResource("SphereShape3D_1")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, -4.37114e-08, 1, 0, -1, -4.37114e-08, 0, 0, 0)
+mesh = SubResource("CylinderMesh_1")

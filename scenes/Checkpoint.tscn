@@ -1,0 +1,13 @@
+[gd_scene load_steps=3 format=3]
+
+[ext_resource type="Script" path="res://scripts/checkpoint.gd" id="1_check"]
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_gate"]
+size = Vector3(10.0, 3.0, 1.0)
+
+[node name="Checkpoint" type="Area3D" groups=["checkpoints"]]
+script = ExtResource("1_check")
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="."]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 1.5, 0)
+shape = SubResource("BoxShape3D_gate")

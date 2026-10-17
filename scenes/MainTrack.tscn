@@ -1,0 +1,128 @@
+[gd_scene load_steps=15 format=3]
+
+[ext_resource type="PackedScene" path="res://scenes/Car.tscn" id="1_car"]
+[ext_resource type="Script" path="res://scripts/chase_camera.gd" id="2_cam"]
+[ext_resource type="PackedScene" path="res://scenes/ItemBox.tscn" id="3_box"]
+[ext_resource type="PackedScene" path="res://scenes/Checkpoint.tscn" id="4_cp"]
+[ext_resource type="Script" path="res://scripts/race_manager.gd" id="5_rm"]
+
+[sub_resource type="ProceduralSkyMaterial" id="SkyMat_1"]
+sky_top_color = Color(0.35, 0.65, 0.95, 1)
+
+[sub_resource type="Sky" id="Sky_1"]
+sky_material = SubResource("SkyMat_1")
+
+[sub_resource type="Environment" id="Env_1"]
+background_mode = 2
+sky = SubResource("Sky_1")
+tonemap_mode = 2
+
+[sub_resource type="BoxShape3D" id="BoxShape3D_suelo"]
+size = Vector3(120, 1, 120)
+
+[sub_resource type="StandardMaterial3D" id="Mat_Suelo"]
+albedo_color = Color(0.25, 0.28, 0.3, 1)
+
+[sub_resource type="BoxMesh" id="BoxMesh_suelo"]
+material = SubResource("Mat_Suelo")
+size = Vector3(120, 1, 120)
+
+[sub_resource type="CylinderShape3D" id="CylinderShape3D_lata"]
+height = 0.5
+radius = 0.18
+
+[sub_resource type="StandardMaterial3D" id="Mat_Lata"]
+albedo_color = Color(0.9, 0.8, 0.1, 1)
+
+[sub_resource type="CylinderMesh" id="CylinderMesh_lata"]
+material = SubResource("Mat_Lata")
+top_radius = 0.18
+bottom_radius = 0.18
+height = 0.5
+
+[node name="MainTrack" type="Node3D"]
+
+[node name="WorldEnvironment" type="WorldEnvironment" parent="."]
+environment = SubResource("Env_1")
+
+[node name="DirectionalLight3D" type="DirectionalLight3D" parent="."]
+transform = Transform3D(0.866, -0.353, 0.353, 0, 0.707, 0.707, -0.5, -0.612, 0.612, 0, 20, 0)
+shadow_enabled = true
+
+[node name="PistaSuelo" type="StaticBody3D" parent="."]
+
+[node name="CollisionShape3D" type="CollisionShape3D" parent="PistaSuelo"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+shape = SubResource("BoxShape3D_suelo")
+
+[node name="MeshInstance3D" type="MeshInstance3D" parent="PistaSuelo"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, -0.5, 0)
+mesh = SubResource("BoxMesh_suelo")
+
+[node name="Car" parent="." instance=ExtResource("1_car")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0.2, 0)
+
+[node name="ChaseCamera" type="Camera3D" parent="." node_paths=PackedStringArray("objetivo")]
+transform = Transform3D(1, 0, 0, 0, 0.965926, 0.258819, 0, -0.258819, 0.965926, 0, 1.2, 2.5)
+script = ExtResource("2_cam")
+objetivo = NodePath("../Car")
+
+[node name="Checkpoints" type="Node3D" parent="."]
+
+[node name="CP0_Meta" parent="Checkpoints" instance=ExtResource("4_cp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -5)
+
+[node name="CP1" parent="Checkpoints" instance=ExtResource("4_cp")]
+transform = Transform3D(-4.37114e-08, 0, 1, 0, 1, 0, -1, 0, -4.37114e-08, 20, 0, -25)
+indice = 1
+
+[node name="CP2" parent="Checkpoints" instance=ExtResource("4_cp")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -45)
+indice = 2
+
+[node name="ItemBoxes" type="Node3D" parent="."]
+
+[node name="ItemBox1" parent="ItemBoxes" instance=ExtResource("3_box")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0, 0, -15)
+
+[node name="ItemBox2" parent="ItemBoxes" instance=ExtResource("3_box")]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 15, 0, -25)
+
+[node name="ObstaculosLata" type="Node3D" parent="."]
+
+[node name="Lata1" type="RigidBody3D" parent="ObstaculosLata"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, 0.8, 0.3, -10)
+mass = 0.25
+
+[node name="Collision" type="CollisionShape3D" parent="ObstaculosLata/Lata1"]
+shape = SubResource("CylinderShape3D_lata")
+
+[node name="Mesh" type="MeshInstance3D" parent="ObstaculosLata/Lata1"]
+mesh = SubResource("CylinderMesh_lata")
+
+[node name="Lata2" type="RigidBody3D" parent="ObstaculosLata"]
+transform = Transform3D(1, 0, 0, 0, 1, 0, 0, 0, 1, -0.6, 0.3, -10.2)
+mass = 0.25
+
+[node name="Collision" type="CollisionShape3D" parent="ObstaculosLata/Lata2"]
+shape = SubResource("CylinderShape3D_lata")
+
+[node name="Mesh" type="MeshInstance3D" parent="ObstaculosLata/Lata2"]
+mesh = SubResource("CylinderMesh_lata")
+
+[node name="RaceManager" type="Node" parent="." node_paths=PackedStringArray("label_hud")]
+script = ExtResource("5_rm")
+label_hud = NodePath("../HUD/MarginContainer/Label")
+
+[node name="HUD" type="CanvasLayer" parent="."]
+
+[node name="MarginContainer" type="MarginContainer" parent="HUD"]
+offset_right = 260.0
+offset_bottom = 80.0
+theme_override_constants/margin_left = 20
+theme_override_constants/margin_top = 20
+
+[node name="Label" type="Label" parent="HUD/MarginContainer"]
+layout_mode = 2
+theme_override_font_sizes/font_size = 22
+text = "Vuelta: 1 / 3"
