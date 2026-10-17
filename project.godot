@@ -6,6 +6,10 @@ config/name="ReVolt RC Clone"
 run/main_scene="res://scenes/MainTrack.tscn"
 config/features=PackedStringArray("4.3", "Forward Plus")
 
+[autoload]
+
+SoundManager="*res://scripts/sound_manager.gd"
+
 [display]
 
 window/size/viewport_width=1280
@@ -90,3 +94,4 @@ pointing/emulate_mouse_from_touch=true
 [rendering]
 
 textures/vram_compression/import_etc2_astc=true
+anti_aliasing/quality/msaa_3d=2
