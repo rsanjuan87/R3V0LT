@@ -1,0 +1,58 @@
+name: "Compilar y Exportar ReVolt Godot 4"
+
+on:
+  push:
+    branches: [ main, master ]
+  pull_request:
+    branches: [ main, master ]
+  workflow_dispatch:
+
+jobs:
+  export-game:
+    name: Exportar Juego
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:4.3
+    steps:
+      - name: Descargar repositorio (Checkout)
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Configurar plantillas de exportacion
+        run: |
+          mkdir -v -p ~/.local/share/godot/export_templates
+          mv /root/.local/share/godot/export_templates/* ~/.local/share/godot/export_templates/ 2>/dev/null || true
+
+      - name: Crear directorios de salida
+        run: |
+          mkdir -v -p builds/windows
+          mkdir -v -p builds/linux
+          mkdir -v -p builds/macos
+
+      - name: Compilar para Linux
+        run: godot --headless --verbose --export-release "Linux/X11" ./builds/linux/ReVoltRC.x86_64
+
+      - name: Compilar para Windows (.exe)
+        run: godot --headless --verbose --export-release "Windows Desktop" ./builds/windows/ReVoltRC.exe
+
+      - name: Compilar para macOS (.app en .zip)
+        run: godot --headless --verbose --export-release "macOS" ./builds/macos/ReVoltRC.zip
+
+      - name: Subir artefacto Windows
+        uses: actions/upload-artifact@v4
+        with:
+          name: ReVoltRC-Windows
+          path: ./builds/windows/
+
+      - name: Subir artefacto Linux
+        uses: actions/upload-artifact@v4
+        with:
+          name: ReVoltRC-Linux
+          path: ./builds/linux/
+
+      - name: Subir artefacto macOS
+        uses: actions/upload-artifact@v4
+        with:
+          name: ReVoltRC-macOS
+          path: ./builds/macos/
